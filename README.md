@@ -71,3 +71,8 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](LICENSE).
+
+
+https://auth0.com/docs/manage-users/user-accounts/user-profiles/sample-user-profiles
+https://github.com/m-haecker/nestjs-social-login/blob/main/src/users/users.module.ts
+https://www.tomray.dev/nestjs-logging

@@ -10,8 +10,8 @@ services:
       && npm run start:dev
       "
     volumes:
-      - .:/code
+      - .:/usr/src/app/
     ports:
-      - "8080:3000"
+      - "3000:3000"
     env_file:
       - ./.env

@@ -1,11 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { Stat, StatDocument } from './schemas/stat.schema';
 import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
 export class StatsService {
-  constructor(@InjectModel(Stat.name) private statModel: Model<StatDocument>) {}
+  constructor(
+    @InjectModel(Stat.name) private statModel: Model<StatDocument>,
+    private readonly logger: Logger,
+  ) {}
 
   async create(createStatDto) {
     const createdCat = new this.statModel(createStatDto);
@@ -36,7 +39,7 @@ export class StatsService {
         { upsert: true, new: true, useFindAndModify: false },
       );
     } catch (e) {
-      console.log(e);
+      this.logger.debug(e);
     }
     return;
   }

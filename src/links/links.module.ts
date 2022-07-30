@@ -1,4 +1,4 @@
-import { CacheModule, Module } from '@nestjs/common';
+import { CacheModule, Logger, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { LinksController } from './links.controller';
 import { LinksService } from './links.service';
@@ -14,6 +14,6 @@ import { StatsController } from './stats.controller';
     CacheModule.register(),
   ],
   controllers: [LinksController, StatsController],
-  providers: [LinksService, StatsService],
+  providers: [LinksService, StatsService, Logger],
 })
 export class LinksModule {}

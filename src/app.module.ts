@@ -1,13 +1,18 @@
-import { CacheModule, Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { LinksModule } from './links/links.module';
+import { CacheModule, Logger, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { GoogleOauthModule } from './auth/google/google-oauth.module';
+import { LinksModule } from './links/links.module';
+import appConfig from './config/app.config';
+import { UsersModule } from './users/users.module';
+import { GoogleModule } from './google/google.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({ isGlobal: true, load: [appConfig] }),
+    CacheModule.register(),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {
@@ -22,10 +27,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       },
       inject: [ConfigService],
     }),
+    GoogleOauthModule,
     LinksModule,
-    CacheModule.register(),
+    UsersModule,
+    GoogleModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, Logger],
 })
 export class AppModule {}
