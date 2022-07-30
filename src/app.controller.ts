@@ -10,6 +10,7 @@ export class AppController {
   @Get()
   @UseGuards(JwtAuthGuard)
   getHello(): string {
+    console.log('getHello');
     return this.appService.getHello();
   }
 

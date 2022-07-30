@@ -60,7 +60,7 @@ export class LinksController {
       await this.cacheManager.set(link, redirectLink, { ttl: 900 });
     }
     res.redirect(HttpStatus.MOVED_PERMANENTLY, redirectLink.long_url);
-    this.statsService.addStat(redirectLink._id);
+    this.statsService.addStat(redirectLink._id).then((r) => null);
     return redirectLink;
   }
 

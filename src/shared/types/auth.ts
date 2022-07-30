@@ -15,9 +15,5 @@ export type JwtPayload = {
   /** Expiration time, e.g. 1644229587. This property is added automatically by passport-jwt. */
   exp?: number;
 
-  /** e.g. "John Doe" */
-  displayName: string;
-
-  /** Profile photo URL */
-  photo?: string;
+  user: {};
 };

@@ -7,7 +7,7 @@ export default (): AppConfig => ({
     jwt: {
       secret: process.env.JWT_SECRET,
       expiresInSeconds:
-        parseInt(process.env.JWT_EXPIRATION_TIME_SECONDS) || 900,
+        parseInt(process.env.JWT_EXPIRATION_TIME_SECONDS) || 60 * 60 * 8, // 8 Days
     },
     google: {
       clientId: process.env.GOOGLE_ID,

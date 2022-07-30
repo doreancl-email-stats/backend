@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Request } from 'express';
@@ -9,14 +9,20 @@ import { JwtPayload } from '../../shared';
 
 @Injectable()
 export class JwtAuthStrategy extends PassportStrategy(Strategy) {
-  constructor(private configService: ConfigService<AppConfig>) {
+  constructor(
+    private readonly logger: Logger,
+    private configService: ConfigService<AppConfig>,
+  ) {
     super({
       // available options: https://github.com/mikenicholson/passport-jwt#configure-strategy
       jwtFromRequest: ExtractJwt.fromExtractors([
         // Users can send us the JWT token either by a bearer token in an authorization header...
         ExtractJwt.fromAuthHeaderAsBearerToken(),
         // ... or in a cookie named "jwt"
-        (request: Request) => request?.cookies?.jwt,
+        (request: Request) => {
+          this.logger.debug('cookie', request.cookies);
+          return request?.cookies?.jwt;
+        },
       ]),
       ignoreExpiration: false,
       secretOrKey: configService.get<string>('auth.jwt.secret'),
@@ -32,7 +38,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy) {
     // GithubOauthController#githubAuthCallback() has saved as cookie named "jwt".
 
     // TODO delete
-    console.log(
+    this.logger.debug(
       `${JwtAuthStrategy.name}#${
         this.validate.name
       }(): payload = ${JSON.stringify(payload, null, 4)}`,
@@ -40,7 +46,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy) {
 
     // Passport assigns the value we return from this method to the Request object as `req.user`.
     // AppController#getProfile() uses this as an example.
-    const { displayName, photo } = payload;
-    return { displayName, photo };
+    const { user } = payload;
+    return { user };
   }
 }

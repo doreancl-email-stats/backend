@@ -1,4 +1,12 @@
-import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Logger,
+  Redirect,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { Request, Response } from 'express';
 
 import { User } from '../../shared';
@@ -7,7 +15,10 @@ import { GoogleOauthGuard } from './google-oauth.guard';
 
 @Controller('auth/google')
 export class GoogleOauthController {
-  constructor(private jwtAuthService: JwtAuthService) {}
+  constructor(
+    private jwtAuthService: JwtAuthService,
+    private readonly logger: Logger,
+  ) {}
 
   @Get()
   @UseGuards(GoogleOauthGuard)
@@ -19,6 +30,7 @@ export class GoogleOauthController {
 
   @Get('callback')
   @UseGuards(GoogleOauthGuard)
+  @Redirect('http://localhost:8080/')
   async googleAuthCallback(
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
@@ -28,16 +40,19 @@ export class GoogleOauthController {
     const user = req.user as User;
 
     // TODO delete
-    console.log(
-      `${this.googleAuthCallback.name}(): req.user = ${JSON.stringify(
+    this.logger.log({
+      log: `${this.googleAuthCallback.name}(): req.user = ${JSON.stringify(
         user,
         null,
         4,
       )}`,
-    );
+    });
 
     const { accessToken } = this.jwtAuthService.login(user);
+
     res.cookie('jwt', accessToken);
+    //res.redirect(HttpStatus.MOVED_PERMANENTLY, 'http://localhost:8080/');
+
     return { access_token: accessToken };
   }
 }

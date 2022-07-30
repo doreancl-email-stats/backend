@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
@@ -21,7 +21,7 @@ import { AppConfig } from '../../config/interfaces';
       inject: [ConfigService],
     }),
   ],
-  providers: [JwtAuthStrategy, JwtAuthService],
+  providers: [JwtAuthStrategy, JwtAuthService, Logger],
   exports: [JwtAuthService],
 })
 export class JwtAuthModule {}

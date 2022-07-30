@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 
 import { UsersModule } from '../../users/users.module';
 import { JwtAuthModule } from '../jwt/jwt-auth.module';
@@ -8,6 +8,6 @@ import { GoogleOauthStrategy } from './google-oauth.strategy';
 @Module({
   imports: [JwtAuthModule, UsersModule],
   controllers: [GoogleOauthController],
-  providers: [GoogleOauthStrategy],
+  providers: [Logger, GoogleOauthStrategy],
 })
 export class GoogleOauthModule {}

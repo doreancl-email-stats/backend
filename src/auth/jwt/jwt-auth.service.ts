@@ -1,19 +1,21 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
-import { JwtPayload, User } from '../../shared';
+import { JwtPayload } from '../../shared';
 
 @Injectable()
 export class JwtAuthService {
-  constructor(private jwtService: JwtService) {}
+  constructor(
+    private jwtService: JwtService,
+    private readonly logger: Logger,
+  ) {}
 
-  login(user: User) {
-    console.log('login', { user });
-    const { id, displayName, photos } = user;
+  login(user) {
+    this.logger.log('login', { user });
+    const { _id } = user;
     const payload: JwtPayload = {
-      sub: id,
-      displayName,
-      photo: photos?.[0]?.value,
+      sub: _id,
+      user: user,
     };
 
     return {

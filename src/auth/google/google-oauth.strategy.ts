@@ -2,7 +2,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-google-oauth20';
 import { config } from 'dotenv';
 
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { Profile } from './interfaces/types';
 import { UsersService } from '../../users/users.service';
 
@@ -10,7 +10,10 @@ config();
 
 @Injectable()
 export class GoogleOauthStrategy extends PassportStrategy(Strategy) {
-  constructor(private readonly usersService: UsersService) {
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly logger: Logger,
+  ) {
     super({
       clientID: process.env.GOOGLE_ID,
       clientSecret: process.env.GOOGLE_SECRET,
@@ -27,6 +30,7 @@ export class GoogleOauthStrategy extends PassportStrategy(Strategy) {
     });
   }
 
+  // noinspection JSUnusedGlobalSymbols
   async validate(
     accessToken: string,
     _refreshToken: string,
@@ -44,7 +48,7 @@ export class GoogleOauthStrategy extends PassportStrategy(Strategy) {
       );
       done(null, user);
     } catch (e) {
-      console.log(54, e);
+      this.logger.debug([54, e]);
       throw new UnauthorizedException();
     }
   }
