@@ -2,6 +2,7 @@ import { Controller, Get, HttpStatus, Query, Res } from '@nestjs/common';
 import * as receivedMessagesListBySender from './static/received_messages_list_by_sender.json';
 import * as topInteractionsByAddress from './static/top_interactions_by_address.json';
 import * as topInteractionsByDomain from './static/top_interactions_by_domain.json';
+import * as receivedEmailsHistogram from './static/received_emails_histogram.json';
 import { Response } from 'express';
 
 @Controller('stats')
@@ -33,6 +34,30 @@ export class StatsController {
   @Get('/received_messages_list_by_sender/')
   async receivedMessagesListBySender(@Res() res: Response, @Query() query) {
     res.status(HttpStatus.OK).json(receivedMessagesListBySender);
+  }
+
+  @Get('/received_emails_histogram/')
+  async receivedEmailsHistogram(@Res() res: Response, @Query() query) {
+    const newReceivedEmailsHistogram = [];
+    for (const receivedEmail in receivedEmailsHistogram) {
+      newReceivedEmailsHistogram.push([
+        receivedEmailsHistogram[receivedEmail][0],
+        this.randomInteger(30, 500),
+      ]);
+    }
+    res.status(HttpStatus.OK).json(newReceivedEmailsHistogram);
+  }
+
+  @Get('/sent_emails_histogram/')
+  async sentEmailsHistogram(@Res() res: Response, @Query() query) {
+    const newReceivedEmailsHistogram = [];
+    for (const receivedEmail in receivedEmailsHistogram) {
+      newReceivedEmailsHistogram.push([
+        receivedEmailsHistogram[receivedEmail][0],
+        this.randomInteger(1, 20),
+      ]);
+    }
+    res.status(HttpStatus.OK).json(newReceivedEmailsHistogram);
   }
 
   @Get('/top_interactions/')
