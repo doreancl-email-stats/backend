@@ -4,10 +4,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { GoogleOauthModule } from './auth/google/google-oauth.module';
-import { LinksModule } from './links/links.module';
 import appConfig from './config/app.config';
 import { UsersModule } from './users/users.module';
 import { GoogleModule } from './google/google.module';
+import { StatsModule } from './stats/stats.module';
+import { SimpleModule } from './simple/simple.module';
 
 @Module({
   imports: [
@@ -28,9 +29,10 @@ import { GoogleModule } from './google/google.module';
       inject: [ConfigService],
     }),
     GoogleOauthModule,
-    LinksModule,
     UsersModule,
     GoogleModule,
+    StatsModule,
+    SimpleModule,
   ],
   controllers: [AppController],
   providers: [AppService, Logger],
