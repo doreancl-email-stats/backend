@@ -16,51 +16,51 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Cache } from 'cache-manager';
-import { UsersService } from './users.service';
+import { MessagesService } from './messages.service';
 import { JwtAuthGuard } from '../auth/jwt/jwt-auth.guard';
 
-@Controller('users')
-@UseGuards(JwtAuthGuard)
-export class UsersController {
+@Controller('messages')
+//@UseGuards(JwtAuthGuard)
+export class MessagesController {
   constructor(
-    private readonly usersService: UsersService,
+    private readonly messagesService: MessagesService,
     private readonly logger: Logger,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   @Post()
-  async create(@Body() createUserDto) {
-    return await this.usersService.create(createUserDto);
+  async create(@Body() createMessageDto) {
+    return await this.messagesService.create(createMessageDto);
   }
 
   @Get()
   async findAll() {
-    return await this.usersService.findAll();
+    return await this.messagesService.findAll();
   }
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
     this.logger.debug(id);
-    const user = await this.usersService.findOne(id);
-    if (!user) {
+    const message = await this.messagesService.findOne(id);
+    if (!message) {
       throw new NotFoundException();
     }
-    return user;
+    return message;
   }
 
   @Patch(':id')
-  patch(@Param('id') id: string, @Body() updateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  patch(@Param('id') id: string, @Body() updateMessageDto) {
+    return this.messagesService.update(+id, updateMessageDto);
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateUserDto) {
-    return this.usersService.update(id, updateUserDto);
+  update(@Param('id') id: string, @Body() updateMessageDto) {
+    return this.messagesService.update(id, updateMessageDto);
   }
 
   @Delete(':id')
   async remove(@Param('id') id: string) {
-    const isRemoved = await this.usersService.remove(id);
+    const isRemoved = await this.messagesService.remove(id);
 
     if (isRemoved !== true) {
       throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND);
