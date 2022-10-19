@@ -61,25 +61,33 @@ export class StatsService {
   }
 
   async receivedEmailsHistogram({ from, to }) {
-    return this.getHistogramGeneric({
+    const res = await this.getHistogramGeneric({
       filter: {
         labelIds: { $nin: ['SENT'] },
         internalDate: { $gte: from, $lt: to },
       },
     });
+    return res;
   }
 
-  async receivedMessagesListBySender({ from, to }) {
-    return this.countGroupedByHeader({
+  async receivedMessagesListBySenderByAddress({ from, to }) {
+    return await this.countGroupedByHeaderByAddress({
       filter: {
-        labelIds: { $nin: ['SENT'] },
+        internalDate: { $gte: from, $lt: to },
+      },
+    });
+  }
+
+  async receivedMessagesListBySenderByDomain({ from, to }) {
+    return await this.countGroupedByHeaderByDomain({
+      filter: {
         internalDate: { $gte: from, $lt: to },
       },
     });
   }
 
   async sentEmailsHistogram({ from, to }) {
-    return this.getHistogramGeneric({
+    return await this.getHistogramGeneric({
       filter: {
         labelIds: 'SENT',
         internalDate: { $gte: from, $lt: to },
@@ -105,11 +113,12 @@ export class StatsService {
     return topInteractions;
   }
 
-  async countGroupedByHeader({ filter }) {
+  async countGroupedByHeaderByAddress({ filter }) {
     const aggResponse = await this.messagesService.aggregate([
+      { $match: filter },
       {
         $addFields: {
-          headers: {
+          headers_map: {
             $map: {
               input: '$payload.headers',
               as: 'holi',
@@ -123,8 +132,8 @@ export class StatsService {
       },
       {
         $addFields: {
-          headers2: {
-            $arrayToObject: '$headers',
+          headers: {
+            $arrayToObject: '$headers_map',
           },
           isSent: {
             $cond: { if: { $in: ['SENT', '$labelIds'] }, then: 1, else: 0 },
@@ -134,20 +143,182 @@ export class StatsService {
           },
         },
       },
-      { $match: filter },
+      {
+        $addFields: {
+          camelFrom: {
+            $ifNull: ['$headers.From', '$headers.from', '$headers.FROM', 'Others'],
+          },
+        },
+      },
+      {
+        $addFields: {
+          parseFrom1: { $split: ['$camelFrom', '<'] },
+        },
+      },
+      {
+        $addFields: {
+          parseFrom2: { $arrayElemAt: ['$parseFrom1', 1] },
+        },
+      },
+      {
+        $addFields: {
+          parseFrom3: {
+            $replaceOne: { input: '$parseFrom2', find: '>', replacement: '' },
+          },
+        },
+      },
+      {
+        $addFields: {
+          address: { $ifNull: ['$parseFrom3', '$camelFrom'] },
+        },
+      },
+      {
+        $addFields: {
+          parseDomain1: { $split: ['$address', '@'] },
+        },
+      },
+      {
+        $addFields: {
+          domain: { $arrayElemAt: ['$parseDomain1', 1] },
+        },
+      },
+      {
+        $project: {
+          createdAt: 0,
+          updatedAt: 0,
+          __v: 0,
+          payload: 0,
+          headers_map: 0,
+          historyId: 0,
+          id: 0,
+          _id: 0,
+          sizeEstimate: 0,
+          parseFrom1: 0,
+          parseFrom2: 0,
+          parseFrom3: 0,
+          parseDomain1: 0,
+          parseDomain2: 0,
+          headers: 0,
+          threadId: 0,
+        },
+      },
       {
         $group: {
-          _id: '$headers2.From',
+          _id: '$address',
+          //_id: { address: '$address' },
+          //_id: {domain: "$domain"},
           messages: { $sum: 1 },
           sent_messages: { $sum: '$isSent' },
           received_messages: { $sum: '$isReceived' },
         },
       },
-      {
-        $sort: { messages: -1 },
-      },
+      { $sort: { messages: -1 } },
     ]);
-    this.logger.log(filter);
+    const formatedInteractions = this.formatTopInteractions(aggResponse);
+    return formatedInteractions;
+  }
+
+  async countGroupedByHeaderByDomain({ filter }) {
+    const aggResponse = await this.messagesService.aggregate([
+      { $match: filter },
+      {
+        $addFields: {
+          headers_map: {
+            $map: {
+              input: '$payload.headers',
+              as: 'holi',
+              in: {
+                k: '$$holi.name',
+                v: '$$holi.value',
+              },
+            },
+          },
+        },
+      },
+      {
+        $addFields: {
+          headers: {
+            $arrayToObject: '$headers_map',
+          },
+          isSent: {
+            $cond: { if: { $in: ['SENT', '$labelIds'] }, then: 1, else: 0 },
+          },
+          isReceived: {
+            $cond: { if: { $in: ['SENT', '$labelIds'] }, then: 0, else: 1 },
+          },
+        },
+      },
+      {
+        $addFields: {
+          camelFrom: {
+            $ifNull: ['$headers.From', '$headers.from', '$headers.FROM', 'Others'],
+          },
+        },
+      },
+      {
+        $addFields: {
+          parseFrom1: { $split: ['$camelFrom', '<'] },
+        },
+      },
+      {
+        $addFields: {
+          parseFrom2: { $arrayElemAt: ['$parseFrom1', 1] },
+        },
+      },
+      {
+        $addFields: {
+          parseFrom3: {
+            $replaceOne: { input: '$parseFrom2', find: '>', replacement: '' },
+          },
+        },
+      },
+      {
+        $addFields: {
+          address: { $ifNull: ['$parseFrom3', '$camelFrom'] },
+        },
+      },
+      {
+        $addFields: {
+          parseDomain1: { $split: ['$address', '@'] },
+        },
+      },
+      {
+        $addFields: {
+          domain: { $arrayElemAt: ['$parseDomain1', 1] },
+        },
+      },
+      {
+        $project: {
+          createdAt: 0,
+          updatedAt: 0,
+          __v: 0,
+          payload: 0,
+          headers_map: 0,
+          historyId: 0,
+          id: 0,
+          _id: 0,
+          sizeEstimate: 0,
+          parseFrom1: 0,
+          parseFrom2: 0,
+          parseFrom3: 0,
+          parseDomain1: 0,
+          parseDomain2: 0,
+          headers: 0,
+          threadId: 0,
+        },
+      },
+      {
+        $group: {
+          _id: '$domain',
+          //_id: { address: '$address' },
+          //_id: {domain: "$domain"},
+          messages: { $sum: 1 },
+          sent_messages: { $sum: '$isSent' },
+          received_messages: { $sum: '$isReceived' },
+        },
+      },
+      { $sort: { messages: -1 } },
+    ]);
     const formatedInteractions = this.formatTopInteractions(aggResponse);
     return formatedInteractions;
   }
