@@ -15,8 +15,7 @@ export class SimpleService {
     private readonly usersService: UsersService,
     private readonly gmailService: GmailService,
     private readonly messagesService: MessagesService,
-  ) {
-  }
+  ) {}
 
   async getOneRaw(id = null) {
     const auth = await this.getAuth();
@@ -117,7 +116,7 @@ export class SimpleService {
 
     //Start recursive
     if (pageChunk.nextPageToken) {
-      // await this.recursivePagination(pageChunk.nextPageToken);
+      await this.recursivePagination(pageChunk.nextPageToken);
     }
     //End recursive
     return emailsHeaders;

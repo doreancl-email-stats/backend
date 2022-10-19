@@ -52,7 +52,6 @@ export class MessagesService {
   }
 
   async aggregate(aggregation): Promise<MessageDTO[]> {
-    //this.logger.debug({ aggregation });
     return await this.messageModel.aggregate(aggregation).exec();
   }
 

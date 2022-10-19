@@ -18,8 +18,7 @@ export class StatsController {
   constructor(
     private readonly statsService: StatsService,
     private readonly logger: Logger,
-  ) {
-  }
+  ) {}
 
   randomInteger(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -63,7 +62,7 @@ export class StatsController {
 
   @Get('/received_messages_list_by_sender/')
   async receivedMessagesListBySender(@Res() res: Response, @Query() query) {
-    const resp = await this.statsService.receivedMessagesListBySender({
+    const resp = await this.statsService.receivedMessagesListBySenderByAddress({
       from: new Date(parseInt(query.from)),
       to: new Date(parseInt(query.to)),
     });
@@ -91,15 +90,24 @@ export class StatsController {
   @Get('/top_interactions/')
   async topInteractions(@Res() res: Response, @Query() query) {
     if (query.group_by === 'address') {
-      const resp = await this.statsService.receivedMessagesListBySender({
-        from: new Date(parseInt(query.from)),
-        to: new Date(parseInt(query.to)),
-      });
+      const resp =
+        await this.statsService.receivedMessagesListBySenderByAddress({
+          from: new Date(parseInt(query.from)),
+          to: new Date(parseInt(query.to)),
+        });
       res.status(HttpStatus.OK).json(resp);
     } else if (query.group_by === 'domain') {
-      res.status(HttpStatus.OK).json(topInteractionsByDomain);
+      const resp = await this.statsService.receivedMessagesListBySenderByDomain(
+        {
+          from: new Date(parseInt(query.from)),
+          to: new Date(parseInt(query.to)),
+        },
+      );
+      res.status(HttpStatus.OK).json(resp);
     } else {
-      res.status(HttpStatus.OK).json([]);
+      res.status(HttpStatus.NOT_FOUND).json({
+        error: 'group_by must be either address or domain',
+      });
     }
   }
 }
