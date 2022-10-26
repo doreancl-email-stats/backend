@@ -13,11 +13,9 @@ import {
   Patch,
   Post,
   Put,
-  UseGuards,
 } from '@nestjs/common';
 import { Cache } from 'cache-manager';
 import { MessagesService } from './messages.service';
-import { JwtAuthGuard } from '../auth/jwt/jwt-auth.guard';
 
 @Controller('messages')
 //@UseGuards(JwtAuthGuard)
