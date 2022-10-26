@@ -1,4 +1,4 @@
-import { Controller, Get, HttpStatus, Logger, Query, Res, } from '@nestjs/common';
+import { Controller, Get, HttpStatus, Query, Res, } from '@nestjs/common';
 import { Response } from 'express';
 import { StatsService } from './stats.service';
 
