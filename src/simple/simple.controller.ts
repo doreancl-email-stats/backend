@@ -1,20 +1,10 @@
-import {
-  CACHE_MANAGER,
-  Controller,
-  Get,
-  Inject,
-  Logger,
-  Query,
-} from '@nestjs/common';
-import { UsersService } from '../users/users.service';
-import { Cache } from 'cache-manager';
+import { Controller, Get, Query, } from '@nestjs/common';
 import { SimpleService } from './simple.service';
 
 @Controller('simple')
 export class SimpleController {
   constructor(
     private readonly simpleService: SimpleService,
-    private readonly logger: Logger,
   ) {}
 
   @Get()

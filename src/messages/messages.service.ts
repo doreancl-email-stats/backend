@@ -1,9 +1,5 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import {
-  MessageDocument,
-  MessageDTO,
-  MessagesCollection,
-} from './schemas/message.schema';
+import { MessageDocument, MessageDTO, MessagesCollection, } from './schemas/message.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { DeleteResult } from 'mongodb';
@@ -15,7 +11,6 @@ export class MessagesService {
   constructor(
     @InjectModel(MessagesCollection)
     private messageModel: Model<MessageDocument>,
-    private readonly logger: Logger,
   ) {}
 
   async create(createMessageDTODto) {

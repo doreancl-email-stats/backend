@@ -1,15 +1,4 @@
-import {
-  Controller,
-  Get,
-  HttpStatus,
-  Logger,
-  Query,
-  Res,
-} from '@nestjs/common';
-import * as receivedMessagesListBySender from './static/received_messages_list_by_sender.json';
-import * as topInteractionsByAddress from './static/top_interactions_by_address.json';
-import * as topInteractionsByDomain from './static/top_interactions_by_domain.json';
-import * as receivedEmailsHistogram from './static/received_emails_histogram.json';
+import { Controller, Get, HttpStatus, Logger, Query, Res, } from '@nestjs/common';
 import { Response } from 'express';
 import { StatsService } from './stats.service';
 
@@ -17,7 +6,6 @@ import { StatsService } from './stats.service';
 export class StatsController {
   constructor(
     private readonly statsService: StatsService,
-    private readonly logger: Logger,
   ) {}
 
   randomInteger(min, max) {
