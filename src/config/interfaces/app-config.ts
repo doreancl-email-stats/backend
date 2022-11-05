@@ -1,6 +1,6 @@
 export interface AppConfig {
   port: number;
-
+  FRONTEND_URL: string;
   auth: {
     jwt: {
       secret: string;
