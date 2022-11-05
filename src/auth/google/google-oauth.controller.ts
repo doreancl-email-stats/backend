@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  HttpStatus,
   Logger,
   Redirect,
   Req,
@@ -12,12 +13,15 @@ import { Request, Response } from 'express';
 import { User } from '../../shared';
 import { JwtAuthService } from '../jwt/jwt-auth.service';
 import { GoogleOauthGuard } from './google-oauth.guard';
+import { ConfigService } from '@nestjs/config';
+import { AppConfig } from '../../config/interfaces';
 
 @Controller('auth/google')
 export class GoogleOauthController {
   constructor(
     private jwtAuthService: JwtAuthService,
     private readonly logger: Logger,
+    private configService: ConfigService<AppConfig>,
   ) {}
 
   @Get()
@@ -30,7 +34,7 @@ export class GoogleOauthController {
 
   @Get('callback')
   @UseGuards(GoogleOauthGuard)
-  @Redirect('http://localhost:8080/')
+  //@Redirect(this.configService.get('MONGO_USERNAME'))
   async googleAuthCallback(
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
@@ -52,6 +56,10 @@ export class GoogleOauthController {
 
     res.cookie('jwt', accessToken);
     //res.redirect(HttpStatus.MOVED_PERMANENTLY, 'http://localhost:8080/');
+    res.redirect(
+      HttpStatus.MOVED_PERMANENTLY,
+      this.configService.get('FRONTEND_URL'),
+    );
 
     return { access_token: accessToken };
   }

@@ -2,7 +2,7 @@ import { AppConfig } from './interfaces';
 
 export default (): AppConfig => ({
   port: parseInt(process.env.PORT) || 3000,
-
+  FRONTEND_URL: process.env.FRONTEND_URL,
   auth: {
     jwt: {
       secret: process.env.JWT_SECRET,
