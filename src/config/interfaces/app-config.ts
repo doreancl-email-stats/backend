@@ -1,6 +1,8 @@
 export interface AppConfig {
   port: number;
   FRONTEND_URL: string;
+  COOKIE_DOMAIN: string;
+  IGNORE_EXPIRATION: boolean;
   auth: {
     jwt: {
       secret: string;

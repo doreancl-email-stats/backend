@@ -20,11 +20,16 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy) {
         ExtractJwt.fromAuthHeaderAsBearerToken(),
         // ... or in a cookie named "jwt"
         (request: Request) => {
-          this.logger.debug('cookie', request.cookies);
+          this.logger.debug(
+            `${JwtAuthStrategy.name}#${this.validate.name}():`,
+            'cookie',
+            request.cookies,
+          );
           return request?.cookies?.jwt;
         },
       ]),
-      ignoreExpiration: false,
+      ignoreExpiration:
+        configService.get<boolean>('IGNORE_EXPIRATION') || false,
       secretOrKey: configService.get<string>('auth.jwt.secret'),
     });
   }

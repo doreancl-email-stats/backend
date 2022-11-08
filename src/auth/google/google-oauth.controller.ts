@@ -8,7 +8,7 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { Request, Response } from 'express';
+import { CookieOptions, Request, Response } from 'express';
 
 import { User } from '../../shared';
 import { JwtAuthService } from '../jwt/jwt-auth.service';
@@ -53,14 +53,26 @@ export class GoogleOauthController {
     });
 
     const { accessToken } = this.jwtAuthService.login(user);
-
-    res.cookie('jwt', accessToken);
+    const cookieOptions: CookieOptions = {
+      domain: this.configService.get('COOKIE_DOMAIN'),
+      path: '/',
+      sameSite: 'lax',
+      httpOnly: true,
+      secure: !this.configService.get('IGNORE_EXPIRATION'),
+    };
+    this.logger.log('cookie1');
+    this.logger.log({ accessToken });
+    this.logger.log({ cookieOptions });
+    this.logger.log('redirect to ' + this.configService.get('FRONTEND_URL'));
+    res.cookie('jwt', accessToken, cookieOptions);
     //res.redirect(HttpStatus.MOVED_PERMANENTLY, 'http://localhost:8080/');
     res.redirect(
       HttpStatus.MOVED_PERMANENTLY,
       this.configService.get('FRONTEND_URL'),
     );
 
-    return { access_token: accessToken };
+    //res.send('Cookie is set');
+
+    //return { access_token: accessToken };
   }
 }
