@@ -4,6 +4,7 @@ import { Request, Response } from 'express';
 import { JwtAuthGuard } from '../auth/jwt/jwt-auth.guard';
 import { ConfigService } from '@nestjs/config';
 import { AppConfig } from '../config/interfaces';
+import { User } from '../users/interfaces/user.interface';
 
 @Controller('simple')
 @UseGuards(JwtAuthGuard)
@@ -16,6 +17,17 @@ export class SimpleController {
   @Get()
   async findAll() {
     return this.simpleService.simpleGmail();
+  }
+
+  @Get('with-queue')
+  async findAllWithQueue(@Req() req: Request) {
+    console.log('req.user----------------------');
+    //console.log(req);
+    console.log(req.isAuthenticated());
+    const user = req.user as User;
+    console.log(user._id);
+
+    return this.simpleService.simpleGmailWithQueue(user);
   }
 
   @Get('one_raw')

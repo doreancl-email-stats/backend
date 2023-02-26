@@ -9,9 +9,20 @@ import { UsersModule } from './users/users.module';
 import { GoogleModule } from './google/google.module';
 import { StatsModule } from './stats/stats.module';
 import { SimpleModule } from './simple/simple.module';
+import { BullModule } from '@nestjs/bull';
+import { MessagesQueueModule } from './messages-queue/messages-queue.module';
 
 @Module({
   imports: [
+    BullModule.forRootAsync({
+      useFactory: () => ({
+        redis: {
+          host: 'redis-16540.c284.us-east1-2.gce.cloud.redislabs.com',
+          port: 16540,
+          password: 'XUEQvRbx0aP24VtRw93IiAJ0ZrY3wgyW',
+        },
+      }),
+    }),
     ConfigModule.forRoot({ isGlobal: true, load: [appConfig] }),
     CacheModule.register(),
     MongooseModule.forRootAsync({
@@ -21,8 +32,13 @@ import { SimpleModule } from './simple/simple.module';
         const password = configService.get('MONGO_PASSWORD');
         const database = configService.get('MONGO_DATABASE');
         const host = configService.get('MONGO_HOST');
+        let uri = `mongodb+srv://${username}:${password}@${host}/${database}?retryWrites=true&w=majority`;
+        uri =
+          'mongodb://emailstats:emailstats@cluster0-shard-00-00.xnwxg.mongodb.net:27017,cluster0-shard-00-01.xnwxg.mongodb.net:27017,cluster0-shard-00-02.xnwxg.mongodb.net:27017/?ssl=true&replicaSet=atlas-6gcqfl-shard-0&authSource=admin&retryWrites=true&w=majority';
+
+        console.log({ uri });
         return {
-          uri: `mongodb+srv://${username}:${password}@${host}?retryWrites=true&w=majority`,
+          uri: uri,
           dbName: database,
         };
       },
@@ -33,6 +49,7 @@ import { SimpleModule } from './simple/simple.module';
     GoogleModule,
     StatsModule,
     SimpleModule,
+    MessagesQueueModule,
   ],
   controllers: [AppController],
   providers: [AppService, Logger],

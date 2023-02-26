@@ -15,9 +15,9 @@ async function bootstrap() {
 
   await app.listen(configService.get('PORT'));
   console.log(
-    `Application is running on: ${await app.getUrl()} in ${configService.get(
-      'NODE_ENV',
-    )} environment`,
+    `Application is running on: ${await app.getUrl()} in
+    ${configService.get('NODE_ENV')} environment
+    `,
   );
 }
 

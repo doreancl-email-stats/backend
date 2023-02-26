@@ -3,15 +3,16 @@ version: "3.9"
 services:
   web:
     build: .
+      #&& npm install
     command: >
       sh -c "
       ls
-      && npm install
-      && npm run start:dev
+      && npm run start:prod
       "
     volumes:
       - .:/usr/src/app/
+      - /usr/src/app/node_modules
     ports:
-      - "3000:3000"
+      - "3030:3000"
     env_file:
       - ./.env

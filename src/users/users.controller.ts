@@ -40,7 +40,7 @@ export class UsersController {
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    this.logger.debug(id);
+    //this.logger.debug(id);
     const user = await this.usersService.findOne(id);
     if (!user) {
       throw new NotFoundException();

@@ -22,8 +22,8 @@ export class GoogleOauthStrategy extends PassportStrategy(Strategy) {
         'email',
         'profile',
         'https://www.googleapis.com/auth/gmail.readonly',
-        'https://www.googleapis.com/auth/gmail.metadata',
-        'https://www.googleapis.com/auth/spreadsheets',
+        //'https://www.googleapis.com/auth/gmail.metadata',
+        //'https://www.googleapis.com/auth/spreadsheets',
       ],
       authorizationURL:
         'https://accounts.google.com/o/oauth2/v2/auth?prompt=consent&access_type=offline&response_type=code',

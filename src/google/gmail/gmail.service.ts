@@ -19,16 +19,35 @@ export class GmailService {
   private readonly _maxResults =
     process.env.GOOGLE_MESSAGES_LIST_MAXRESULTS || 500; // https://developers.google.com/gmail/api/reference/rest/v1/users.messages/list?hl=en_US#query-parameters
 
-  public list = async (pageToken = null, maxResult = null) => {
+  public list = async (
+    pageToken = null,
+    maxResult = null,
+    dateRange = null,
+  ) => {
     try {
-      const res1 = await this._gmail.users.messages.list({
+      const filter = {
         userId: 'me',
         pageToken: pageToken,
         maxResults: maxResult || this._maxResults,
-      });
+        q: '',
+      };
+      if (dateRange) {
+        filter.q = `after:${dateRange.after.toLocaleDateString('en-GB', {
+          year: 'numeric',
+          month: 'numeric',
+          day: 'numeric',
+        })} before:${dateRange.before.toLocaleDateString('en-GB', {
+          year: 'numeric',
+          month: 'numeric',
+          day: 'numeric',
+        })}`;
+      }
+      this.logger.log('--------------------');
+      this.logger.log({ filter });
+      const res1 = await this._gmail.users.messages.list(filter);
       return res1.data;
     } catch (e) {
-      this.logger.error({ e });
+      console.log(e);
       return e;
     }
   };

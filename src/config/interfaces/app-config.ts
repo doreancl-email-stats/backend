@@ -27,4 +27,8 @@ export interface AppConfig {
   'auth.google.clientId'?: string;
   'auth.google.clientSecret'?: string;
   'auth.google.callbackURL'?: string;
+  MY_NODE_NAME: string;
+  MY_POD_NAMESPACE: string;
+  MY_POD_IP: string;
+  MY_POD_SERVICE_ACCOUNT: string;
 }

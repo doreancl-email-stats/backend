@@ -40,6 +40,9 @@ export class User {
 
   @Prop()
   profile: SchemaTypes.Types.Mixed;
+
+  @Prop()
+  score: number;
 }
 
 export type UserDocument = User & Document;

@@ -1,5 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { MessageDocument, MessageDTO, MessagesCollection, } from './schemas/message.schema';
+import {
+  MessageDocument,
+  MessageDTO,
+  MessagesCollection,
+} from './schemas/message.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { DeleteResult } from 'mongodb';
@@ -14,9 +18,13 @@ export class MessagesService {
   ) {}
 
   async create(createMessageDTODto) {
-    const createdCat = new this.messageModel(createMessageDTODto);
-    console.log({ createdCat }, { createMessageDTODto });
-    return await createdCat.save();
+    try {
+      const createdCat = new this.messageModel(createMessageDTODto);
+      console.log({ createdCat }, { createMessageDTODto });
+      return await createdCat.save();
+    } catch (e) {
+      return e;
+    }
   }
 
   async createBatch(messages: Message[]) {
@@ -98,6 +106,25 @@ export class MessagesService {
       });
     }
 
+    return message;
+  }
+
+  async getLast(userId: string) {
+    const message = await this.messageModel
+      .findOne(
+        {
+          user_id: userId,
+          payload: { exists: true },
+        },
+        {},
+        {
+          sort: {
+            internalDate: -1,
+          },
+          limit: 1,
+        },
+      )
+      .exec();
     return message;
   }
 }

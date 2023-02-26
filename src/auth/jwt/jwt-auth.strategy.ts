@@ -20,11 +20,13 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy) {
         ExtractJwt.fromAuthHeaderAsBearerToken(),
         // ... or in a cookie named "jwt"
         (request: Request) => {
+          /*
           this.logger.debug(
             `${JwtAuthStrategy.name}#${this.validate.name}():`,
             'cookie',
             request.cookies,
           );
+          */
           return request?.cookies?.jwt;
         },
       ]),
@@ -43,15 +45,17 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy) {
     // GithubOauthController#githubAuthCallback() has saved as cookie named "jwt".
 
     // TODO delete
+    /*
     this.logger.debug(
       `${JwtAuthStrategy.name}#${
         this.validate.name
       }(): payload = ${JSON.stringify(payload, null, 4)}`,
     );
+    */
 
     // Passport assigns the value we return from this method to the Request object as `req.user`.
     // AppController#getProfile() uses this as an example.
     const { user } = payload;
-    return { user };
+    return user;
   }
 }
