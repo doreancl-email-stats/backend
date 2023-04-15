@@ -28,4 +28,11 @@ export class MessagesQueueProcessor {
     this.logger.debug(job.data);
     this.logger.debug('Transcoding completed');
   }
+
+  @Process(JOB_NAMES.EMAIL_RETRIVAL_1_3)
+  handleMessagesEMAIL_RETRIVAL_1_3(job: Job) {
+    this.logger.debug('Start transcoding...');
+    this.logger.debug(job.data);
+    this.logger.debug('Transcoding completed');
+  }
 }

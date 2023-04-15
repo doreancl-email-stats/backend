@@ -91,7 +91,7 @@ export class SimpleService {
     const auth = await this.getAuth();
 
     // Start gmail service
-    // Todo create factory or best implementation on app.module for instance with
+    // Todo: create factory or best implementation on app.module for instance with
     // this already seated
     this.gmailService.gmail = google.gmail({ version: 'v1', auth: auth });
     const pageChunk = await this.gmailService.list(null, 2, dateRange);
@@ -106,6 +106,31 @@ export class SimpleService {
     this.logger.log({ pageChunk });
 
     return 'super nice!';
+  }
+
+  async findUsersToCheckEmails() {
+    const cutoff = new Date();
+
+    const filter = {
+      last_check_date: { $lte: cutoff },
+    };
+    const users = await this.usersService.findAll(filter);
+    //this.logger.debug(133, { users });
+
+    const response = [];
+    for (const user of users) {
+      await this.messagesQueueService.produce(JOB_NAMES.EMAIL_RETRIVAL_1_3, {
+        user_id: user.user_id,
+      });
+      response.push({
+        job_name: JOB_NAMES.EMAIL_RETRIVAL_1_3,
+        message: {
+          user_id: user.user_id,
+        },
+      });
+    }
+
+    return response;
   }
 
   async simpleGmail() {
@@ -177,10 +202,8 @@ export class SimpleService {
     const emailsHeaders = [];
     for (const chunk of pageChunk.messages) {
       const emailHeaders = await this.gmailService.getClean(chunk.id);
-
       const formatedMessage = this.format(emailHeaders.data);
       emailsHeaders.push(formatedMessage);
-
       if (emailsHeaders.length > StaticConfig.MAX_CHUNK_SIZE) {
         //Start send to sheets
         await this.messagesService.createBatch(emailsHeaders);
@@ -201,6 +224,7 @@ export class SimpleService {
       await this.recursivePagination(pageChunk.nextPageToken);
     }
     //End recursive
+
     return emailsHeaders;
   }
 }

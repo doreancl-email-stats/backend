@@ -14,6 +14,11 @@ export class SimpleController {
     private configService: ConfigService<AppConfig>,
   ) {}
 
+  @Get('finduserstocheckemails')
+  async findUsersToCheckEmails() {
+    return this.simpleService.findUsersToCheckEmails();
+  }
+
   @Get()
   async findAll() {
     return this.simpleService.simpleGmail();

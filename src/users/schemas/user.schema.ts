@@ -43,6 +43,15 @@ export class User {
 
   @Prop()
   score: number;
+
+  //Field for schedule the GMAIL message getter and is setted to new bigger date for check again
+  @Prop({
+    required: true,
+    type: Date,
+    //set: Date.now,
+    default: null,
+  })
+  last_check_date: Date;
 }
 
 export type UserDocument = User & Document;

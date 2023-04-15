@@ -10,13 +10,14 @@ export class MessageDTO {
 
   @Prop({
     required: true,
-    type: mongoose.Schema.Types.ObjectId, ref: 'User'
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
   })
   user: User;
 
-  @Prop({ required: true, })
+  @Prop({ required: true })
   id: string;
-  @Prop({ required: true, })
+  @Prop({ required: true })
   threadId: string;
   @Prop()
   labelIds: string[];
