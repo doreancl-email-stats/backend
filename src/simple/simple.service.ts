@@ -115,16 +115,17 @@ export class SimpleService {
       last_check_date: { $lte: cutoff },
     };
     const users = await this.usersService.findAll(filter);
-    //this.logger.debug(133, { users });
+    //this.logger.debug(133, users[0].user_id);
 
     const response = [];
     for (const user of users) {
       await this.messagesQueueService.produce(JOB_NAMES.EMAIL_RETRIVAL_1_3, {
         user_id: user.user_id,
       });
+
       response.push({
-        job_name: JOB_NAMES.EMAIL_RETRIVAL_1_3,
-        message: {
+        jobName: JOB_NAMES.EMAIL_RETRIVAL_1_3,
+        data: {
           user_id: user.user_id,
         },
       });
