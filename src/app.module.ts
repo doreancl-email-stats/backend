@@ -15,11 +15,11 @@ import { MessagesQueueModule } from './messages-queue/messages-queue.module';
 @Module({
   imports: [
     BullModule.forRootAsync({
-      useFactory: () => ({
+      useFactory: async (configService: ConfigService) => ({
         redis: {
-          host: 'redis-13726.c284.us-east1-2.gce.cloud.redislabs.com',
-          port: 13726,
-          password: 'XUEQvRbx0aP24VtRw93IiAJ0ZrY3wgyW',
+          host: configService.get('REDIS_HOST'),
+          port: configService.get('REDIS_PORT'),
+          password: configService.get('REDIS_PASSWORD'),
         },
       }),
     }),
