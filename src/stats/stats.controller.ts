@@ -1,12 +1,10 @@
-import { Controller, Get, HttpStatus, Query, Res, } from '@nestjs/common';
+import { Controller, Get, HttpStatus, Query, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { StatsService } from './stats.service';
 
 @Controller('stats')
 export class StatsController {
-  constructor(
-    private readonly statsService: StatsService,
-  ) {}
+  constructor(private readonly statsService: StatsService) {}
 
   randomInteger(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;

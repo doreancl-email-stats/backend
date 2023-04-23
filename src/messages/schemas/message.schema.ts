@@ -1,15 +1,23 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 import { Transform } from 'class-transformer';
+import { User } from '../../users/schemas/user.schema';
 
 @Schema({ timestamps: true })
 export class MessageDTO {
   @Transform(({ value }) => value.toString())
   _id: string;
 
-  @Prop()
+  @Prop({
+    required: true,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  })
+  user: User;
+
+  @Prop({ required: true })
   id: string;
-  @Prop()
+  @Prop({ required: true })
   threadId: string;
   @Prop()
   labelIds: string[];

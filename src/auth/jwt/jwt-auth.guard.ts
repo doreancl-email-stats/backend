@@ -8,8 +8,8 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   }
 
   handleRequest(err, user, info) {
-    this.logger.debug('handleRequest 1', { err, user, info });
-    this.logger.debug('handleRequest 2');
+    //TODO: use for check handle JWT
+    //this.logger.debug('handleRequest 1', { err, user, info });
     // You can throw an exception based on either "info" or "err" arguments
     if (err || !user) {
       throw err || new UnauthorizedException();

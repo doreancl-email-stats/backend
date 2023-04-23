@@ -19,11 +19,13 @@ export class UsersService {
   }
 
   async findOneBy(filter): Promise<User> {
+    console.log(22, {filter})
     return await this.userModel.findOne(filter).exec();
   }
 
-  async findAll(): Promise<User[]> {
-    return await this.userModel.find().exec();
+  async findAll(filter = {}): Promise<User[]> {
+    console.log({ filter });
+    return await this.userModel.find(filter).exec();
   }
 
   async update(id, updateUserDto) {
@@ -59,6 +61,7 @@ export class UsersService {
       user = await this.update(user._id, {
         access_token: accessToken,
         refresh_token: refreshToken,
+        last_check_date: new Date(),
       });
     }
     if (!user) {
@@ -67,6 +70,7 @@ export class UsersService {
         access_token: accessToken,
         refresh_token: refreshToken,
         profile,
+        last_check_date: new Date(),
       });
     }
 

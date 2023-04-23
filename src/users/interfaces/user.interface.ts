@@ -8,6 +8,7 @@ export interface User extends Document {
   is_active: boolean;
   last_login: string;
   created_at: string;
+  last_check_date: Date;
 
   //profile
   provider: string;

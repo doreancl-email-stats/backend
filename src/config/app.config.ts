@@ -22,4 +22,13 @@ export default (): AppConfig => ({
     example_google_user_id: process.env.EXAMPLE_GOOGLE_USER_ID,
     example_google_sheet_id: process.env.EXAMPLE_GOOGLE_SHEET_ID,
   },
+  MY_NODE_NAME: process.env.MY_NODE_NAME,
+  MY_POD_NAMESPACE: process.env.MY_POD_NAMESPACE,
+  MY_POD_IP: process.env.MY_POD_IP,
+  MY_POD_SERVICE_ACCOUNT: process.env.MY_POD_SERVICE_ACCOUNT,
 });
+
+export const StaticConfig = {
+  MessagesQueueName: 'MessagesQueue',
+  MAX_CHUNK_SIZE: 10000,
+};
